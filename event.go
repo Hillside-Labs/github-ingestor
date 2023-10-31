@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/webhooks/v6/github"
 )
 
@@ -39,11 +39,11 @@ type EventHandler struct {
 	log  *log.Logger
 }
 
-func (e *EventHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (e *EventHandler) HandleEvents(c *gin.Context) {
 
 	initEventList()
 
-	payload, err := e.hook.Parse(r, ghEventList...)
+	payload, err := e.hook.Parse(c.Request, ghEventList...)
 	if err != nil {
 		if err == github.ErrEventNotFound {
 			// ok event wasn't one of the ones asked to be parsed
@@ -52,10 +52,6 @@ func (e *EventHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	//Decide on whether I want to use a huge switch statement or use a reflect library to map the payload to the type of event
-	//(can have them all also under a single interface and just do .Handle(). The reflect approach is less code and potentially cleaner. The switch
-	// approach is very explicit (which is good) but also it's a lot of code, it seems.
-	// Either way all EventHandle logic will be outside of the switch case
 	switch payload := payload.(type) {
 
 	case github.CheckRunPayload:
