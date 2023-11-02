@@ -1,4 +1,4 @@
-package main
+package pkg
 
 import (
 	"fmt"
@@ -37,6 +37,10 @@ func initEventList() {
 type EventHandler struct {
 	hook *github.Webhook
 	log  *log.Logger
+}
+
+func NewEventHandler(hook *github.Webhook, l *log.Logger) *EventHandler {
+	return &EventHandler{hook: hook, log: l}
 }
 
 func (e *EventHandler) HandleEvents(c *gin.Context) {
