@@ -34,3 +34,5 @@ require (
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/go-playground/webhooks/v6 => github.com/ammario/webhooks/v6 v6.0.0-20230530210742-61c8d3560b68
