@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"fmt"
+	"github-ingestor-go/pkg/memphis"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -37,14 +38,14 @@ func initEventList() {
 type EventHandler struct {
 	hook     *github.Webhook
 	log      *log.Logger
-	producer *GithubProducer
+	producer *memphis.GithubProducer
 }
 
 func NewEventHandler(hook *github.Webhook, l *log.Logger) *EventHandler {
 
 	initEventList()
 
-	return &EventHandler{hook: hook, log: l, producer: NewProducer(l)}
+	return &EventHandler{hook: hook, log: l, producer: memphis.NewProducer(l)}
 }
 
 func (e *EventHandler) HandleEvents(c *gin.Context) {
