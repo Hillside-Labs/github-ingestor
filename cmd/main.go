@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/webhooks/v6/github"
 
-	"github-ingestor-go/pkg"
+	"github-ingestor-go/internal"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 		l.Fatal(err)
 	}
 
-	eventHandler := pkg.NewEventHandler(hook, l)
+	eventHandler := internal.NewEventHandler(hook, l)
 
 	r := gin.Default()
 	r.POST("/", eventHandler.HandleEvents)
