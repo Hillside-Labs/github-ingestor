@@ -2,6 +2,8 @@ package pkg
 
 import (
 	"log"
+	"os"
+	"strconv"
 
 	"github.com/memphisdev/memphis.go"
 )
@@ -13,7 +15,10 @@ type GithubProducer struct {
 }
 
 func NewProducer(l *log.Logger) *GithubProducer {
-	conn, err := memphis.Connect("aws-us-east-1.cloud.memphis.dev", "github_ingestor", memphis.Password("mh2-JK69M5"), memphis.AccountId(223674564))
+	memphis_acc_id, _ := strconv.Atoi(os.Getenv("MEMPHIS_ACCOUNT_ID"))
+	conn, err := memphis.Connect(os.Getenv("MEMPHIS_HOST"), os.Getenv("MEMPHIS_USERNAME"),
+		memphis.Password(os.Getenv("MEMPHIS_PASSWORD")), memphis.AccountId(memphis_acc_id))
+
 	if err != nil {
 		l.Println("Producer failed to connect:", err.Error())
 	}

@@ -41,13 +41,13 @@ type EventHandler struct {
 }
 
 func NewEventHandler(hook *github.Webhook, l *log.Logger) *EventHandler {
+
+	initEventList()
+
 	return &EventHandler{hook: hook, log: l, producer: NewProducer(l)}
 }
 
 func (e *EventHandler) HandleEvents(c *gin.Context) {
-
-	initEventList()
-
 	payload, err := e.hook.Parse(c.Request, ghEventList...)
 	if err != nil {
 		if err == github.ErrEventNotFound {
