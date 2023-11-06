@@ -35,12 +35,13 @@ func initEventList() {
 }
 
 type EventHandler struct {
-	hook *github.Webhook
-	log  *log.Logger
+	hook     *github.Webhook
+	log      *log.Logger
+	producer *GithubProducer
 }
 
 func NewEventHandler(hook *github.Webhook, l *log.Logger) *EventHandler {
-	return &EventHandler{hook: hook, log: l}
+	return &EventHandler{hook: hook, log: l, producer: NewProducer(l)}
 }
 
 func (e *EventHandler) HandleEvents(c *gin.Context) {
@@ -104,10 +105,12 @@ func (e *EventHandler) HandleEvents(c *gin.Context) {
 		fmt.Printf("%+v\n", payload)
 
 	case github.IssueCommentPayload:
+		e.producer.PushEvent(payload)
 		fmt.Printf("%+v\n", payload)
 
 	case github.IssuesPayload:
 		fmt.Printf("%+v\n", payload)
+		e.producer.PushEvent(payload)
 
 	case github.LabelPayload:
 		fmt.Printf("%+v\n", payload)
