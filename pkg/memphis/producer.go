@@ -2,11 +2,20 @@ package memphis
 
 import (
 	"log"
-	"os"
-	"strconv"
 
 	"github.com/memphisdev/memphis.go"
 )
+
+type ProducerConfig struct {
+	accountId int
+	host      string
+	username  string
+	password  string
+}
+
+func NewProducerConfig(accountId int, host, username, pass string) *ProducerConfig {
+	return &ProducerConfig{accountId: accountId, host: host, username: username, password: pass}
+}
 
 type GithubProducer struct {
 	conn     *memphis.Conn
@@ -14,10 +23,8 @@ type GithubProducer struct {
 	l        *log.Logger
 }
 
-func NewProducer(l *log.Logger) *GithubProducer {
-	memphis_acc_id, _ := strconv.Atoi(os.Getenv("MEMPHIS_ACCOUNT_ID"))
-	conn, err := memphis.Connect(os.Getenv("MEMPHIS_HOST"), os.Getenv("MEMPHIS_USERNAME"),
-		memphis.Password(os.Getenv("MEMPHIS_PASSWORD")), memphis.AccountId(memphis_acc_id))
+func NewProducer(pc *ProducerConfig, l *log.Logger) *GithubProducer {
+	conn, err := memphis.Connect(pc.host, pc.username, memphis.Password(pc.password), memphis.AccountId(pc.accountId))
 
 	if err != nil {
 		l.Println("Producer failed to connect:", err.Error())

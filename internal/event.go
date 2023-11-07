@@ -41,11 +41,11 @@ type EventHandler struct {
 	producer *memphis.GithubProducer
 }
 
-func NewEventHandler(hook *github.Webhook, l *log.Logger) *EventHandler {
+func NewEventHandler(hook *github.Webhook, l *log.Logger, pc *memphis.ProducerConfig) *EventHandler {
 
 	initEventList()
 
-	return &EventHandler{hook: hook, log: l, producer: memphis.NewProducer(l)}
+	return &EventHandler{hook: hook, log: l, producer: memphis.NewProducer(pc, l)}
 }
 
 func (e *EventHandler) HandleEvents(c *gin.Context) {
