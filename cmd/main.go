@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/go-playground/webhooks/v6/github"
 
 	"github-ingestor-go/internal"
+	"github-ingestor-go/pkg/memphis"
 )
 
 func main() {
@@ -23,7 +25,11 @@ func main() {
 		l.Fatal(err)
 	}
 
-	eventHandler := internal.NewEventHandler(hook, l)
+	pc, err := getProducerConfig()
+	if err != nil {
+		l.Fatal("Unable to construct ProducerConfig, env variables are probably missing: ", err.Error())
+	}
+	eventHandler := internal.NewEventHandler(hook, l, pc)
 
 	r := gin.Default()
 	r.POST("/", eventHandler.HandleEvents)
@@ -41,6 +47,15 @@ func main() {
 	}()
 
 	gracefulShutdown(server)
+}
+
+func getProducerConfig() (*memphis.ProducerConfig, error) {
+	memphis_acc_id, err := strconv.Atoi(os.Getenv("MEMPHIS_ACCOUNT_ID"))
+	if err != nil {
+		return &memphis.ProducerConfig{}, err
+	}
+
+	return memphis.NewProducerConfig(memphis_acc_id, os.Getenv("MEMPHIS_HOST"), os.Getenv("MEMPHIS_USERNAME"), os.Getenv("MEMPHIS_PASSWORD")), nil
 }
 
 func gracefulShutdown(server *http.Server) {
